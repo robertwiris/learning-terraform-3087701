@@ -83,7 +83,7 @@ module "blog_alb" {
   }
 }
 
-module "blog-sg" {
+module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "5.3.0"
 
