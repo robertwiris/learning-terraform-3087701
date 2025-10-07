@@ -42,11 +42,7 @@ module "blog_autoscaling" {
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
 
-  target_groups = [
-    {
-      arn = module.blog_alb.target_group_arns[0]
-    }
-  ]
+  attach_load_balancer_target_group_arns = module.blog_alb.target_group_arns
 }
 
 module "blog_alb" {
