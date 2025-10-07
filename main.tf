@@ -41,11 +41,13 @@ module "blog_autoscaling" {
   security_groups     = [module.blog_sg.security_group_id]
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
-}
-
-resource "aws_autoscaling_attachment" "blog_asg_attachment" {
-  autoscaling_group_name = module.blog_autoscaling.autoscaling_group_name
-  alb_target_group_arn   = module.blog_alb.target_group_arns[0]
+  
+  traffic_source_attachments = [
+    {
+      traffic_source_arn = module.blog_alb.target_group_arns[0]
+      type               = "TARGET_GROUP"
+    }
+  ]
 }
 
 module "blog_alb" {
