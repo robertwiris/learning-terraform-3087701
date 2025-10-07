@@ -43,12 +43,9 @@ module "blog_autoscaling" {
   image_id            = data.aws_ami.app_ami.id
 }
 
-module "blog_asg_attachment" {
-  source  = "terraform-aws-modules/autoscaling/aws//modules/autoscaling_attachment"
-  version = "9.0.1"
-
+resource "aws_autoscaling_attachment" "blog_asg_attachment" {
   autoscaling_group_name = module.blog_autoscaling.autoscaling_group_name
-  lb_target_group_arn    = module.blog_alb.target_group_arns[0]
+  alb_target_group_arn   = module.blog_alb.target_group_arns[0]
 }
 
 module "blog_alb" {
