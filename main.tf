@@ -41,8 +41,14 @@ module "blog_autoscaling" {
   security_groups     = [module.blog_sg.security_group_id]
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
+}
 
-  attach_load_balancer_target_group_arns = module.blog_alb.target_group_arns
+module "blog_asg_attachment" {
+  source  = "terraform-aws-modules/autoscaling/aws//modules/autoscaling_attachment"
+  version = "9.0.1"
+
+  autoscaling_group_name = module.blog_autoscaling.autoscaling_group_name
+  lb_target_group_arn    = module.blog_alb.target_group_arns[0]
 }
 
 module "blog_alb" {
