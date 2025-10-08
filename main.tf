@@ -16,6 +16,7 @@ data "aws_ami" "app_ami" {
 
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.8"
 
   name = "dev"
   cidr = "10.0.0.0/16"
@@ -32,7 +33,7 @@ module "blog_vpc" {
 
 module "blog_autoscaling" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "9.0.1"
+  version = "8.0.0"
 
   name                = "blog"
   min_size            = 1
@@ -42,25 +43,18 @@ module "blog_autoscaling" {
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
   
-  traffic_source_attachments = [
-    {
-      traffic_source_arn = module.blog_alb.target_group_arns[0]
-      type               = "TARGET_GROUP"
-    }
-  ]
+  target_group_arns = module.blog_alb.target_group_arns
 }
 
 module "blog_alb" {
   source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.0"
+  version = "~> 6.10.0"
 
-  name = "blog-alb"
-
-  load_balancer_type = "application"
-
-  vpc_id             = module.blog_vpc.vpc_id
-  subnets            = module.blog_vpc.public_subnets
-  security_groups    = [module.blog_sg.security_group_id]
+  name                = "blog-alb"
+  load_balancer_type  = "application"
+  vpc_id              = module.blog_vpc.vpc_id
+  subnets             = module.blog_vpc.public_subnets
+  security_groups     = [module.blog_sg.security_group_id]
 
   target_groups = [
     {
@@ -86,7 +80,7 @@ module "blog_alb" {
 
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "5.3.0"
+  version = "~> 5.3"
 
   vpc_id              = module.blog_vpc.vpc_id
   name                = "blog"
