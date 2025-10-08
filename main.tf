@@ -87,5 +87,10 @@ module "blog_autoscaling" {
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
   
-  target_group_arns = module.blog_alb.target_group_arns
+  traffic_source_attachments = [
+    {
+      traffic_source_identifier = module.blog_alb.target_group_arns[0]
+      traffic_source_type       = "elbv2"
+    }
+  ]
 }
