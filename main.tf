@@ -77,7 +77,7 @@ module "blog_alb" {
 
 module "blog_autoscaling" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "8.0.0"
+  version = "6.4.0"
 
   name                = "blog"
   min_size            = 1
@@ -87,13 +87,5 @@ module "blog_autoscaling" {
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
 
-  traffic_source_attachments = [
-    {
-      traffic_source_identifier = module.blog_alb.target_group_arns[0]
-      traffic_source_type       = "elbv2"
-    }
-  ]
-  
-  elastic_gpu_specifications      = []
-  elastic_inference_accelerator   = []
+  target_group_arns = module.blog_alb.target_group_arns
 }
